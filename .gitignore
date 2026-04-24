@@ -14,3 +14,7 @@ tsconfig.tsbuildinfo
 # Both .npmrc variants carry a Chainguard pull token — never commit.
 .npmrc
 .npmrc.chainguard
+# Cosmo Router binary — 87 MB, fetched via `wgc router download-binary`
+infra/cosmo/bin/
+# wgc local cache of composed supergraph
+oracle-default/
