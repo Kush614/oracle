@@ -26,7 +26,7 @@ export function resolveAttestation(): ChainguardAttestation {
   return {
     image: CONFIG.chainguard.image,
     digest: resolveDigest(),
-    sbom_ref: process.env.SBOM_REF ?? 'supabase://oracle-artifacts/sboms/resolver.spdx.json',
+    sbom_ref: process.env.SBOM_REF ?? 'ghost.build:oracle.sboms/resolver.spdx.json',
     sigstore_verify_cmd: buildVerifyCmd()
   };
 }
@@ -64,9 +64,12 @@ function safeRead(path: string): string {
 }
 
 function buildVerifyCmd(): string {
+  // Chainguard Containers published under cgr.dev/chainguard/* are signed via
+  // Sigstore; anyone can verify with cosign. The identity regex targets the
+  // Chainguard image-builder; change it if you re-sign in your own pipeline.
   return [
     `cosign verify ${CONFIG.chainguard.image}`,
-    `  --certificate-identity-regexp='https://github.com/oracle-demo/.+'`,
+    `  --certificate-identity-regexp='https://github.com/chainguard-images/.+'`,
     `  --certificate-oidc-issuer=https://token.actions.githubusercontent.com`
   ].join(' \\\n');
 }
