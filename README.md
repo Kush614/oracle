@@ -1,7 +1,9 @@
-# Oracle
+# Verity
 
-> **Attested resolution infrastructure for prediction markets.**
+> **The verifiability layer prediction markets deserve.**
 > Five adversarial agents. One cryptographically signed `cited.md`. Zero hand-waving.
+
+*(Project codename inside the repo: `oracle`.)*
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-black?style=for-the-badge)](LICENSE)
 [![Status](https://img.shields.io/badge/status-hackathon_demo_ready-FF90E8?style=for-the-badge)](#demo)
@@ -43,11 +45,11 @@ Prediction markets are only as trustworthy as their resolution. The status quo i
 | **Kalshi** | Manual determination by a licensed entity | Nobody externally |
 | **Augur** | REP-holder voting | Token-weighted politics |
 
-Resolution becomes a Twitter argument with money on it. Oracle replaces it with a **governed, cryptographically auditable process**.
+Resolution becomes a Twitter argument with money on it. Verity replaces it with a **governed, cryptographically auditable process**.
 
 ## The solution
 
-Every market Oracle resolves produces one file: **`cited.md`**. A human-readable, machine-verifiable markdown document with:
+Every market Verity resolves produces one file: **`cited.md`**. A human-readable, machine-verifiable markdown document with:
 
 - The full evidence chain (every source, every timestamp, every confidence score)
 - A challenger record (did any source contradict the verdict?)
@@ -72,7 +74,7 @@ cited_md_hash:    sha256:fca36380944a323478f70fbe8986e08ca1b249852ea208ac9f187e1
 
 ## Demo
 
-**One-click end-to-end**: open http://localhost:3000 → hit **▶ Run end-to-end demo** → watch the full pipeline fire against live sponsor infrastructure in ~90 seconds.
+**One-click end-to-end**: open http://localhost:3000 → hit **▶ Run end-to-end demo** → watch the full pipeline fire against live sponsor infrastructure in ~90 seconds. *(Every resolved market earns a cited.md — the `cited.md` file.)*
 
 - [`DEMO.md`](./DEMO.md) — full 5-minute pitch script with timing
 - [`spec.md`](./spec.md) — 17-section canonical specification
@@ -92,7 +94,7 @@ Seven live, one deliberately mocked. Each row below links to the exact file wher
 | **InsForge** | `gpt-4o-mini` verdict narrative generation for cited.md | Narrative in Ghost's `resolutions` table includes real InsForge-generated prose | [`lib/clients/insforge.ts`](./lib/clients/insforge.ts) |
 | **Chainguard** | Zero-CVE container base + sigstore signature for reproducibility | `cgr.dev/chainguard/node@sha256:9e33f02b…` digest fetched live from registry; signature tag verified to exist | [`lib/clients/chainguard.ts`](./lib/clients/chainguard.ts) · [`infra/chainguard/README.md`](./infra/chainguard/README.md) |
 | **Redis Cloud** | Hot bus — RedisJSON for market state, Streams for evidence, Set for dedup, TimeSeries for odds history | 79+ live `oracle:*` keys, all 4 module operations verified | [`lib/redis/bus.ts`](./lib/redis/bus.ts) · [`lib/redis/keys.ts`](./lib/redis/keys.ts) |
-| **Guild.ai** | Published Resolver + Challenger agents that Oracle's pipeline attests to | `kushise27/oracle-resolver@612364ca9c06` and `kushise27/oracle-challenger@0874ce03ed37` live in the catalog; SHAs cited in every verdict | [`guild/resolver/agent.ts`](./guild/resolver/agent.ts) · [`guild/challenger/agent.ts`](./guild/challenger/agent.ts) |
+| **Guild.ai** | Published Resolver + Challenger agents that Verity's pipeline attests to | `kushise27/oracle-resolver@612364ca9c06` and `kushise27/oracle-challenger@0874ce03ed37` live in the catalog; SHAs cited in every verdict | [`guild/resolver/agent.ts`](./guild/resolver/agent.ts) · [`guild/challenger/agent.ts`](./guild/challenger/agent.ts) |
 | **WunderGraph Cosmo** | Federated GraphQL over hot (Redis) + warm (Ghost) subgraphs | Two subgraphs registered via `wgc`, native router 0.311.0 composes them at `:3002/graphql` | [`infra/cosmo/README.md`](./infra/cosmo/README.md) · [`lib/graphql/`](./lib/graphql/) · [`app/api/graphql/`](./app/api/graphql/) |
 
 ### ⚠ Mock (contract-compatible)
@@ -109,9 +111,9 @@ Paper-credit micropayment gates on three agent actions (market create, evidence 
 
 ## Deep-dive: how each sponsor is load-bearing
 
-### Ghost.build — the warm store
+### Ghost.build — the ledger
 
-Every resolved market produces a row in `cited_md`. Every Resolver run lands in `agent_runs`. Every Challenger verdict goes to `challenge_records`. All accessible via:
+Every resolved market produces a row in `cited_md` — that row is the canonical record. Every Resolver run lands in `agent_runs`. Every Challenger verdict goes to `challenge_records`. All accessible via:
 
 ```bash
 ghost sql oracle "select market_id, outcome, confidence, length(markdown) as bytes
@@ -119,11 +121,11 @@ ghost sql oracle "select market_id, outcome, confidence, length(markdown) as byt
                   order by published_at desc limit 5"
 ```
 
-`lib/clients/ghost.ts` opens a `pg.Pool` against `GHOST_DATABASE_URL` (obtained via `ghost create oracle` + `ghost connect oracle`), and mirrors every write into an in-process map so fallback mode stays contract-compatible. Numeric columns are coerced from pg's string representation to `number` at the boundary so the UI's `.toFixed()` calls stay simple.
+`lib/clients/ghost.ts` opens a `pg.Pool` against `GHOST_DATABASE_URL` (obtained via `ghost create oracle` + `ghost connect oracle`) and mirrors every write into an in-process map so fallback mode stays contract-compatible. Numeric columns are coerced from pg's string representation to `number` at the boundary so the UI's `.toFixed()` calls stay simple.
 
 ### TinyFish — evidence extraction
 
-Oracle's Evidence Gatherer calls `POST https://agent.tinyfish.ai/v1/automation/run` with the market question as the goal. The agent returns structured JSON with `event`, `supports ∈ {YES, NO, NEUTRAL}`, `confidence`, `timestamp` — the exact shape Oracle's evidence stream expects.
+Verity's Evidence Gatherer calls `POST https://agent.tinyfish.ai/v1/automation/run` with the market question as the goal. The agent returns structured JSON with `event`, `supports ∈ {YES, NO, NEUTRAL}`, `confidence`, `timestamp` — the exact shape Verity's evidence stream expects.
 
 ```typescript
 // lib/clients/tinyfish.ts
@@ -143,7 +145,7 @@ Trial project provisioned via `POST https://api.insforge.dev/agents/v1/signup` �
 
 ### Chainguard — signed provenance
 
-Oracle's resolver runs on `cgr.dev/chainguard/node:latest` — a zero-CVE distroless image signed via Sigstore. At boot, the Oracle runtime fetches the current digest from the registry via the Docker v2 API (no Docker daemon needed):
+Verity's resolver runs on `cgr.dev/chainguard/node:latest` — a zero-CVE distroless image signed via Sigstore. At boot, the runtime fetches the current digest from the registry via the Docker v2 API (no Docker daemon needed):
 
 ```bash
 TOKEN=$(curl -s "https://cgr.dev/token?service=cgr.dev&scope=repository:chainguard/node:pull" | jq -r .token)
@@ -179,7 +181,7 @@ Two agents published to the catalog:
 - **`kushise27/oracle-resolver@612364ca9c06`** — encodes spec §5.4 + §6.1/§6.2 resolution rules; returns pure JSON verdict
 - **`kushise27/oracle-challenger@0874ce03ed37`** — enforces §5.5 isolation contract; sees only the verdict surface, computes contradiction against §6.3 confidence floor
 
-Oracle's in-process pipeline names these exact SHAs in every cited.md. A verifier can `guild agent chat --agent kushise27/oracle-resolver@612364ca9c06 --once < evidence.json` and reproduce the verdict.
+Verity's in-process pipeline names these exact SHAs in every `cited.md`. A verifier can `guild agent chat --agent kushise27/oracle-resolver@612364ca9c06 --once < evidence.json` and reproduce the verdict.
 
 ### WunderGraph Cosmo — one query, two subgraphs
 
@@ -235,7 +237,7 @@ Copy `.env.example` → `.env.local` and fill in any of these you want live. Not
 curl -fsSL https://install.ghost.build/ | sh
 ghost login                      # GitHub OAuth
 ghost create oracle --wait       # provisions a Postgres instance
-ghost sql oracle < db/schema.sql # apply Oracle's schema
+ghost sql oracle < db/schema.sql # apply Verity's schema
 ghost connect oracle             # prints postgres://… — paste into GHOST_DATABASE_URL
 ```
 
@@ -311,7 +313,7 @@ echo "WUNDERGRAPH_URL=http://localhost:3002/graphql" >> .env.local
 
 ## Verifying a verdict yourself
 
-Anyone can re-derive a cited.md's hash and confirm its Chainguard signature — no credentials required.
+Anyone can re-derive a `cited.md`'s hash and confirm its Chainguard signature — no credentials required.
 
 ```bash
 # 1. Pull the cited.md from Ghost (or the public /cited/:id page)
@@ -339,7 +341,7 @@ That's the whole trust contract. Three shell commands.
 ## Repository layout
 
 ```
-oracle/
+receipt-chain/                           (repo codename: oracle/)
 ├── app/                          Next.js 14 App Router
 │   ├── page.tsx                  Dashboard — hero, sponsor marquee, market list
 │   ├── market/[marketId]/        Live market detail — odds, evidence, cited.md
@@ -422,6 +424,10 @@ npm run attest         # emit Chainguard attestation block
 npm run ghost:schema   # apply db/schema.sql to the ghost oracle database
 ```
 
+## Pick a name
+
+*The branding is **Verity**. The repo, code paths, environment variables, MCP package (`oracle-mcp`), and database names stay as `oracle` — that's the codename and touching those would break every integration. If you clone this, feel free to rename either level; the two are decoupled on purpose.*
+
 ## Spec
 
 The project was built to [`spec.md`](./spec.md), a 17-section specification covering:
@@ -452,4 +458,4 @@ MIT. See [LICENSE](./LICENSE). Seven sponsor integrations, zero mock-only depend
 
 ---
 
-*Oracle is not a prediction market app. Oracle is the trust layer prediction markets don't have.*
+*Verity is not a prediction market app. Verity is the trust layer prediction markets don't have.*

@@ -1,6 +1,7 @@
-# Oracle — 5-Minute Demo Script
+# Verity — 5-Minute Demo Script
 
-**Title card**: *Oracle · Attested Resolution Infrastructure for Prediction Markets*
+**Title card**: *Verity · Veritys for Prediction Markets*
+**Subtitle**: *Attested resolution infrastructure · project codename `oracle`*
 **Author**: Kush · **Stack**: TinyFish · InsForge · Redis · Ghost.build · Chainguard · Guild.ai · Cosmo · x402
 **Total runtime**: 5:00 · **Format**: screen recording with voiceover
 
@@ -22,7 +23,7 @@ ghost sql oracle "select market_id, hash from cited_md order by published_at des
 ```
 
 Open these three browser tabs in advance:
-1. `http://localhost:3000` — Oracle dashboard
+1. `http://localhost:3000` — Verity dashboard
 2. `http://localhost:3002` — Cosmo playground
 3. `https://github.com/Kush614/oracle` — the repo
 
@@ -47,15 +48,15 @@ ghost sql oracle "truncate resolutions, challenge_records, agent_runs, agent_sco
 >
 > So we built the trust layer."
 
-Cut to the Oracle dashboard hero.
+Cut to the Verity dashboard hero.
 
 ---
 
-## ACT 2 — What Oracle is (0:25 → 0:50)
+## ACT 2 — What Verity is (0:25 → 0:50)
 
 **Screen**: `http://localhost:3000` — the pink hero with "Five agents. One cited.md. Zero hand-waving."
 
-> "Oracle is a five-agent adversarial tournament. For every market, one
+> "Verity is a five-agent adversarial tournament. For every market, one
 > agent gathers evidence. Another adjusts odds. A third resolves. A fourth
 > runs in an isolated workspace and tries to reverse the verdict. Every
 > verdict becomes a *cited.md* — a cryptographically signed resolution
@@ -72,7 +73,7 @@ Point at the black sponsor-marquee strip scrolling left:
 
 ## ACT 3 — One-click demo (0:50 → 2:30)
 
-**Screen**: Oracle dashboard, hero in view.
+**Screen**: Verity dashboard, hero in view.
 
 > "Watch this. One button. No pre-seeding. Full pipeline."
 
@@ -199,7 +200,7 @@ query OracleView($id: ID!) {
 
 Variables: `{ "id": "<market_id from the demo>" }`
 
-> "This is where **WunderGraph Cosmo** earns its keep. Oracle's state is
+> "This is where **WunderGraph Cosmo** earns its keep. Verity's state is
 > split across two subgraphs — a hot one backed by Redis, a warm one
 > backed by Ghost. Cosmo Router federates them. One GraphQL query
 > resolves the market entity across both, returns a unified payload,
@@ -245,7 +246,7 @@ Hit Run, point at the response.
 > `npm run smoke`, and you'll get the same verdict against the same
 > evidence — because that's what cryptographic attestation means.
 >
-> Oracle isn't a prediction market app. It's the trust layer prediction
+> Verity isn't a prediction market app. It's the trust layer prediction
 > markets don't have.
 >
 > Thanks."

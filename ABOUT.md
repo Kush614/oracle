@@ -1,10 +1,10 @@
-# Receipt
+# Verity
 
-> Receipts for prediction markets.
+> The verifiability layer prediction markets deserve.
 
 ## Elevator pitch
 
-Receipt is the trust layer prediction markets don't have. Instead of UMA-style social-consensus disputes, Receipt runs a **five-agent adversarial tournament** for every market — evidence is gathered by **TinyFish's Agent API**, normalized through a **Nexla**-shaped pipeline, deduplicated on a **Redis Cloud** hot bus, aggregated by an **InsForge**-powered resolver, and independently challenged in an isolated **Guild.ai** workspace. Every verdict becomes a **`cited.md`** — a cryptographically signed resolution file with a real **Chainguard** container digest, a published Guild agent SHA, and a sha256 you can verify in three shell commands. Live state (Redis) and resolved records (**Ghost.build** Postgres) are federated through a **WunderGraph Cosmo** router, and three agent actions are gated by **x402** paper micropayments. Seven live sponsors. One canonical artifact. Zero hand-waving.
+Verity is the trust layer prediction markets don't have. Instead of UMA-style social-consensus disputes, Verity runs a **five-agent adversarial tournament** for every market — evidence is gathered by **TinyFish's Agent API**, normalized through a **Nexla**-shaped pipeline, deduplicated on a **Redis Cloud** hot bus, aggregated by an **InsForge**-powered resolver, and independently challenged in an isolated **Guild.ai** workspace. Every verdict becomes a **`cited.md`** — a cryptographically signed resolution file with a real **Chainguard** container digest, a published Guild agent SHA, and a sha256 you can verify in three shell commands. Live state (Redis) and resolved records (**Ghost.build** Postgres) are federated through a **WunderGraph Cosmo** router, and three agent actions are gated by **x402** paper micropayments. Seven live sponsors. One canonical artifact. Zero hand-waving.
 
 ## About the project
 
