@@ -14,7 +14,12 @@ import { computeOdds } from './odds-adjuster';
 import { governedRun, sealedWorkspace } from '@lib/clients/guild';
 
 export async function resolveMarket(marketId: string): Promise<VerdictObject> {
-  const ws = sealedWorkspace('resolver', 'guild-resolver-strict-v1');
+  // The agent identifier follows the Guild.ai catalog naming convention when
+  // GUILD_RESOLVER_AGENT_ID is set, so the cited.md attestation names the
+  // exact published contract this verdict is reproducible against.
+  const agentName =
+    process.env.GUILD_RESOLVER_AGENT_ID ?? 'guild-resolver-strict-v1';
+  const ws = sealedWorkspace('resolver', agentName);
   const { output } = await governedRun(ws, marketId, async () => {
     const bus = await getBus();
     const card = await bus.jsonGet<MarketCard>(keys.marketState(marketId));

@@ -18,7 +18,9 @@ import { saveChallenge } from '@lib/clients/ghost';
 export async function challengeVerdict(
   verdict: Pick<VerdictObject, 'market_id' | 'cycle' | 'outcome' | 'confidence'>
 ): Promise<ChallengeRecord> {
-  const ws = sealedWorkspace('challenger', 'guild-challenger-aggressive-v1');
+  const agentName =
+    process.env.GUILD_CHALLENGER_AGENT_ID ?? 'guild-challenger-aggressive-v1';
+  const ws = sealedWorkspace('challenger', agentName);
   const { output } = await governedRun(ws, verdict.market_id, async () => {
     const bus = await getBus();
 
