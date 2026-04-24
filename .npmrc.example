@@ -1,0 +1,14 @@
+# Chainguard Libraries registry for JavaScript.
+# Malware-resistant, rebuilt-from-verified-source drop-in replacements for npm.
+#
+# Provision:
+#   chainctl auth login
+#   chainctl libraries entitlements create --parent <org-id> --ecosystems=JAVASCRIPT
+#   chainctl auth pull-token --repository=javascript --ttl=720h --parent <org-id>
+#
+# Then base64-encode USERNAME:PASSWORD from the pull-token output and paste below.
+# The .npmrc file with the real auth value must stay gitignored.
+
+registry=https://libraries.cgr.dev/javascript/
+//libraries.cgr.dev/javascript/:_auth=REPLACE_WITH_BASE64_OF_USERNAME_COLON_PASSWORD
+//libraries.cgr.dev/javascript/:always-auth=true

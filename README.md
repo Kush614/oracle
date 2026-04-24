@@ -36,12 +36,17 @@ each client detects its env variable and swaps in the HTTP path.
 |---|---|
 | `REDIS_URL` | ioredis with RedisJSON/Streams/TimeSeries commands |
 | `GHOST_DATABASE_URL` | Ghost.build Postgres warm store (resolutions, agent_runs, cited_md, …) |
+| `TINYFISH_API_KEY` | TinyFish Agent API for live evidence extraction |
+| `INSFORGE_PROJECT_URL` + `INSFORGE_API_KEY` | InsForge chat-completion verdict narratives |
 | `NEXLA_API_URL` + `NEXLA_API_KEY` | Nexla evidence normalization pipeline |
-| `TINYFISH_API_URL` + `TINYFISH_API_KEY` | TinyFish live browsing |
 | `GUILD_API_URL` + `GUILD_API_KEY` + `GUILD_WORKSPACE_ID` | Guild.ai governed run posting |
-| `INSFORGE_API_URL` + `INSFORGE_API_KEY` | InsForge reasoning + paper ledger |
-| `WUNDERGRAPH_URL` | Federated GraphQL reads |
-| `CHAINGUARD_DIGEST` | Pin the resolver image digest used in cited.md |
+| `WUNDERGRAPH_URL` | Cosmo Router federated-graph endpoint |
+| `CHAINGUARD_DIGEST` | Real sigstore-signed resolver image digest embedded in cited.md |
+
+See [`infra/chainguard/README.md`](./infra/chainguard/README.md) for the Chainguard
+container + libraries setup (containers live by default; libraries opt-in).
+See [`infra/cosmo/README.md`](./infra/cosmo/README.md) for publishing the two
+subgraphs with `wgc`.
 
 ## Ghost.build — warm Postgres store
 
