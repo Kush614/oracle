@@ -32,30 +32,38 @@ export function CitedMdPanel({ marketId }: { marketId: string }) {
     };
   }, [marketId]);
 
-  if (loading) return <div className="text-oracle-mute text-xs">loading...</div>;
+  if (loading) {
+    return <div className="font-mono text-xs text-oracle-ink/70">loading…</div>;
+  }
+
   if (!data || data.error) {
     return (
-      <div className="text-oracle-mute text-xs">
-        cited.md not yet published — resolve the market to generate one.
+      <div className="panel-flat bg-oracle-card p-4 text-center">
+        <div className="sticker text-lg mx-auto mb-2">⏳</div>
+        <div className="font-display text-sm">cited.md pending</div>
+        <div className="text-xs font-mono text-oracle-ink/70 mt-1">run the pipeline above</div>
       </div>
     );
   }
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2 text-[11px]">
+      <div className="flex items-center gap-2 flex-wrap">
         <span className={`chip ${data.verification?.ok ? 'chip-yes' : 'chip-warn'}`}>
-          {data.verification?.ok ? 'hash verified' : 'hash mismatch'}
+          {data.verification?.ok ? '✓ sha256 verified' : '⚠ hash mismatch'}
         </span>
         {data.ghost_url && (
-          <a href={data.ghost_url} target="_blank" rel="noreferrer" className="chip">
-            ghost: {data.ghost_url}
+          <a
+            href={data.ghost_url}
+            target="_blank"
+            rel="noreferrer"
+            className="chip chip-ink font-mono text-[10px]"
+          >
+            ghost.build ↗
           </a>
         )}
       </div>
-      <pre className="text-[11px] whitespace-pre-wrap leading-relaxed bg-oracle-bg border border-oracle-line rounded p-3 max-h-96 overflow-auto text-oracle-ink">
-        {data.markdown}
-      </pre>
+      <pre className="code-box max-h-96">{data.markdown}</pre>
     </div>
   );
 }

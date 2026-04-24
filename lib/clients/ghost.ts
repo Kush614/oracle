@@ -145,10 +145,13 @@ export async function listResolutions(): Promise<VerdictObject[]> {
          from resolutions
         order by resolved_at desc`
     );
-    return r.rows.map(row => ({
-      ...row,
-      cited_sources: parseMaybeJson(row.cited_sources)
-    })) as VerdictObject[];
+    return r.rows.map(row =>
+      coerceNumeric(
+        { ...row, cited_sources: parseMaybeJson(row.cited_sources) } as VerdictObject,
+        ['confidence', 'cycle'],
+        ['resolved_at']
+      )
+    ) as VerdictObject[];
   });
   if (rows) return rows;
   return Array.from(mem().resolutions.values()).sort((a, b) =>
@@ -196,7 +199,13 @@ export async function listChallenges(): Promise<ChallengeRecord[]> {
          from challenge_records
         order by ran_at desc`
     );
-    return r.rows;
+    return r.rows.map(row =>
+      coerceNumeric(
+        row,
+        ['cycle', 'counter_sources_found', 'max_contradiction_confidence', 'threshold'],
+        ['ran_at']
+      )
+    );
   });
   if (rows) return rows;
   return Array.from(mem().challenges.values());
@@ -238,7 +247,9 @@ export async function listAgentRuns(): Promise<AgentRun[]> {
         order by started_at desc
         limit 200`
     );
-    return r.rows;
+    return r.rows.map(row =>
+      coerceNumeric(row, ['confidence'], ['started_at', 'ended_at'])
+    );
   });
   if (rows) return rows;
   return mem().agentRuns.slice().sort((a, b) => b.started_at.localeCompare(a.started_at));
@@ -294,7 +305,16 @@ export async function listAgentScores(): Promise<AgentScore[]> {
          from agent_scores
         order by runs desc`
     );
-    return r.rows;
+    return r.rows.map(row =>
+      coerceNumeric(row, [
+        'verdict_accuracy',
+        'citation_coverage',
+        'confidence_calibration',
+        'resolution_latency_ms',
+        'challenge_success_rate',
+        'runs'
+      ])
+    );
   });
   if (rows) return rows;
   return Array.from(mem().agentScores.values()).sort((a, b) => b.runs - a.runs);
@@ -389,4 +409,26 @@ function parseMaybeJson(v: unknown): unknown {
     }
   }
   return v;
+}
+
+// pg returns PostgreSQL `numeric` columns as strings to avoid precision loss.
+// Oracle's UI expects Numbers (.toFixed, arithmetic), so coerce at the
+// boundary. Also normalize timestamptz columns from Date → ISO string so
+// downstream slice/localeCompare operations stay uniform with the fallback.
+function coerceNumeric<T>(row: T, numericKeys: (keyof T)[], dateKeys: (keyof T)[] = []): T {
+  const out = { ...row } as T;
+  const bag = out as unknown as Record<string, unknown>;
+  for (const k of numericKeys as string[]) {
+    const v = bag[k];
+    if (v !== null && v !== undefined) {
+      bag[k] = Number(v as string | number);
+    }
+  }
+  for (const k of dateKeys as string[]) {
+    const v = bag[k];
+    if (v instanceof Date) {
+      bag[k] = v.toISOString();
+    }
+  }
+  return out;
 }

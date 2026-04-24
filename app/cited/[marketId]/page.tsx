@@ -5,50 +5,58 @@ import { verifyCitedMd } from '@lib/cited-md/generator';
 
 export const dynamic = 'force-dynamic';
 
-// Public cited.md page. This is the URL that ends up in the attestation
-// block's `published_to` field. Ghost.build stores the row, this route renders
-// it. Authenticated evidence packet access still goes through the x402 gate on
-// /api/markets/[id]/evidence — this page shows the canonical public artifact.
-
 export default async function CitedPage({ params }: { params: { marketId: string } }) {
   const published = await getPublishedCitedMd(params.marketId);
   if (!published) notFound();
   const verification = verifyCitedMd(published.markdown);
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-8">
-      <Link href={`/market/${params.marketId}`} className="text-xs text-oracle-mute hover:text-oracle-ink">
+    <div className="max-w-4xl mx-auto px-6 py-10">
+      <Link href={`/market/${params.marketId}`} className="link-chunky text-xs">
         ← back to market
       </Link>
 
-      <header className="mt-2 mb-6 flex items-start justify-between gap-6">
-        <div>
-          <div className="text-xs text-oracle-mute mb-1">{params.marketId}</div>
-          <h1 className="text-2xl text-oracle-ink">cited.md</h1>
-          <div className="text-xs text-oracle-mute mt-1">published {published.publishedAt}</div>
-        </div>
-        <div className="flex items-center gap-2">
+      <header className="panel bg-oracle-yellow p-8 mt-4 mb-6">
+        <div className="flex flex-wrap items-center gap-3 mb-4">
+          <div className="sticker text-lg">📜</div>
+          <span className="chip chip-ink font-mono text-[10px]">{params.marketId}</span>
           <span className={`chip ${verification.ok ? 'chip-yes' : 'chip-warn'}`}>
-            {verification.ok ? 'sha256 verified' : 'sha256 mismatch'}
+            {verification.ok ? '✓ sha256 verified' : '⚠ hash mismatch'}
           </span>
+        </div>
+        <h1 className="font-display text-4xl md:text-5xl leading-none">cited.md</h1>
+        <div className="mt-3 text-sm font-mono text-oracle-ink/80">
+          published {published.publishedAt}
         </div>
       </header>
 
-      <pre className="text-xs leading-relaxed whitespace-pre-wrap border border-oracle-line rounded bg-oracle-panel p-5 text-oracle-ink">
-        {published.markdown}
-      </pre>
+      <pre className="code-box">{published.markdown}</pre>
 
-      <section className="mt-6 text-xs text-oracle-mute">
-        <div>
-          Stored in Ghost.build as a row in <code className="text-oracle-ink">cited_md</code>.{' '}
-          <code className="text-oracle-ink">sha256</code> is computed excluding the hash line itself.
+      <section className="panel bg-oracle-card p-6 mt-6">
+        <div className="kicker mb-3">Self-verifying hash</div>
+        <p className="text-sm mb-4">
+          The file's sha256 is computed with the hash line itself excluded — anyone can re-derive it
+          and compare against <code className="font-mono bg-oracle-bg border-2 border-oracle-line px-1.5 py-0.5 rounded">cited_md_hash</code>.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 font-mono text-xs">
+          <div>
+            <div className="kicker text-oracle-mute mb-1">claimed</div>
+            <div className="break-all">{verification.claimed}</div>
+          </div>
+          <div>
+            <div className="kicker text-oracle-mute mb-1">recomputed</div>
+            <div className="break-all">{verification.computed}</div>
+          </div>
         </div>
-        <div className="mt-2">
-          <b className="text-oracle-ink">Hash claimed:</b> {verification.claimed}
-        </div>
-        <div>
-          <b className="text-oracle-ink">Hash recomputed:</b> {verification.computed}
-        </div>
+      </section>
+
+      <section className="panel bg-oracle-mint p-6 mt-6">
+        <div className="kicker mb-2">Stored in</div>
+        <p className="text-sm">
+          This artifact lives as a row in Ghost.build Postgres (<code className="font-mono">cited_md</code> table).
+          The resolver container digest is pinned to Chainguard's signed <code className="font-mono">cgr.dev/chainguard/node:latest</code>;
+          run the sigstore-verify command in the attestation block above and you'll get a green ✓.
+        </p>
       </section>
     </div>
   );

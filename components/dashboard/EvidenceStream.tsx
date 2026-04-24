@@ -3,28 +3,41 @@ import { tierForSource } from '@shared/types';
 
 export function EvidenceStream({ evidence }: { evidence: EvidenceObject[] }) {
   if (evidence.length === 0) {
-    return <div className="text-oracle-mute text-xs">no evidence yet — run a gather pass</div>;
+    return (
+      <div className="font-mono text-xs text-oracle-ink/70 p-6 text-center pattern-dots rounded-lg">
+        no evidence collected yet.
+      </div>
+    );
   }
   return (
-    <ul className="space-y-2 text-xs">
-      {evidence.slice(-10).reverse().map(e => {
+    <ul className="space-y-3">
+      {evidence.slice(-8).reverse().map(e => {
         const tier = tierForSource(e.source_type);
-        const tone =
-          e.supports === 'YES' ? 'text-oracle-yes' : e.supports === 'NO' ? 'text-oracle-no' : 'text-oracle-mute';
+        const chipCls =
+          e.supports === 'YES' ? 'chip-yes' : e.supports === 'NO' ? 'chip-no' : '';
+        const tierLabel = ['', 'T1 · official', 'T2 · primary', 'T3 · news', 'T4 · community'][tier];
+        const tierColor = ['', 'chip-yes', 'chip-sky', 'chip-lav', 'chip-warn'][tier];
         return (
-          <li key={e.evidence_id} className="border-b border-oracle-line pb-2">
-            <div className="flex items-center gap-2">
-              <span className={`chip ${e.supports === 'YES' ? 'chip-yes' : e.supports === 'NO' ? 'chip-no' : ''}`}>
-                {e.supports}
+          <li key={e.evidence_id} className="panel-flat bg-oracle-card p-3">
+            <div className="flex items-center gap-2 flex-wrap mb-1.5">
+              <span className={`chip ${chipCls}`}>{e.supports}</span>
+              <span className={`chip ${tierColor}`}>{tierLabel}</span>
+              <span className="chip font-mono text-[10px]">{e.source_type}</span>
+              <span className="ml-auto font-display text-sm">
+                {(e.confidence * 100).toFixed(0)}%
               </span>
-              <span className="chip">tier {tier}</span>
-              <span className="text-oracle-mute">{e.source_type}</span>
-              <span className={tone}>{(e.confidence * 100).toFixed(0)}%</span>
             </div>
-            <div className="text-oracle-ink mt-1 truncate">
-              <a href={e.source} target="_blank" rel="noreferrer">{e.source}</a>
+            <a
+              href={e.source}
+              target="_blank"
+              rel="noreferrer"
+              className="block font-mono text-xs text-oracle-ink truncate"
+            >
+              {e.source}
+            </a>
+            <div className="font-mono text-[11px] text-oracle-ink/70 mt-0.5 truncate">
+              {e.event}
             </div>
-            <div className="text-oracle-mute truncate">{e.event}</div>
           </li>
         );
       })}

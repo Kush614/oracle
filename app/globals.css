@@ -4,39 +4,122 @@
 
 @layer base {
   :root {
-    color-scheme: dark;
+    color-scheme: light;
+  }
+  html {
+    scroll-behavior: smooth;
   }
   body {
-    font-feature-settings: 'ss01', 'ss02', 'cv01';
+    background-image: radial-gradient(
+        circle at 1px 1px,
+        rgba(10, 10, 10, 0.08) 1px,
+        transparent 0
+      );
+    background-size: 16px 16px;
   }
   a {
-    color: #6aa6ff;
+    color: #0A0A0A;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
+    text-decoration-color: #FF90E8;
   }
   a:hover {
-    text-decoration: underline;
+    text-decoration-color: #0A0A0A;
   }
 }
 
 @layer components {
   .panel {
-    @apply border border-oracle-line rounded-md bg-oracle-panel;
+    @apply bg-oracle-card border-3 border-oracle-line rounded-xl shadow-brut;
   }
-  .chip {
-    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] border border-oracle-line bg-oracle-bg text-oracle-mute;
+  .panel-flat {
+    @apply bg-oracle-card border-3 border-oracle-line rounded-xl;
   }
-  .chip-yes {
-    @apply border-oracle-yes/40 text-oracle-yes bg-oracle-yes/5;
-  }
-  .chip-no {
-    @apply border-oracle-no/40 text-oracle-no bg-oracle-no/5;
-  }
-  .chip-warn {
-    @apply border-oracle-warn/40 text-oracle-warn bg-oracle-warn/5;
-  }
+
   .btn {
-    @apply inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded border border-oracle-line bg-oracle-bg hover:bg-oracle-line transition;
+    @apply inline-flex items-center gap-2 px-4 py-2 font-display text-sm uppercase tracking-wide
+           bg-oracle-card text-oracle-ink border-3 border-oracle-line rounded-xl shadow-brut
+           transition-all duration-100 active:shadow-brutSm active:translate-x-[2px] active:translate-y-[2px];
   }
-  .btn-primary {
-    @apply border-oracle-accent/40 text-oracle-accent hover:bg-oracle-accent/10;
+  .btn:hover {
+    @apply -translate-y-[1px] -translate-x-[1px] shadow-brutLg;
+  }
+  .btn:disabled {
+    @apply opacity-60 cursor-not-allowed shadow-brutSm translate-x-[2px] translate-y-[2px] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-brutSm;
+  }
+  .btn-pink {
+    @apply bg-oracle-pink;
+  }
+  .btn-yes {
+    @apply bg-oracle-mint;
+  }
+  .btn-no {
+    @apply bg-oracle-peach;
+  }
+  .btn-lavender {
+    @apply bg-oracle-lavender;
+  }
+  .btn-yellow {
+    @apply bg-oracle-yellow;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 text-[11px] font-display uppercase tracking-wider
+           bg-oracle-card border-2 border-oracle-line rounded-full;
+  }
+  .chip-yes   { @apply bg-oracle-mint; }
+  .chip-no    { @apply bg-oracle-peach; }
+  .chip-warn  { @apply bg-oracle-yellow; }
+  .chip-pink  { @apply bg-oracle-pink; }
+  .chip-lav   { @apply bg-oracle-lavender; }
+  .chip-sky   { @apply bg-oracle-sky; }
+  .chip-ink   { @apply bg-oracle-ink text-oracle-bg border-oracle-ink; }
+
+  .sticker {
+    @apply inline-flex items-center justify-center w-8 h-8 rounded-full border-2 border-oracle-line bg-oracle-pink;
+    transform: rotate(-8deg);
+  }
+
+  .kicker {
+    @apply font-display uppercase tracking-[0.18em] text-[11px] text-oracle-ink;
+  }
+
+  .pulse-dot {
+    @apply relative inline-block w-2.5 h-2.5 rounded-full bg-oracle-yes;
+  }
+  .pulse-dot::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 9999px;
+    border: 2px solid #2AA76E;
+    animation: pulse-ring 1.5s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+  }
+
+  .code-box {
+    @apply font-mono text-xs leading-relaxed bg-oracle-ink text-oracle-bg
+           border-3 border-oracle-line rounded-xl p-4 shadow-brut overflow-x-auto;
+  }
+
+  .link-chunky {
+    @apply font-display uppercase tracking-wider underline underline-offset-4 decoration-4 decoration-oracle-pink
+           hover:decoration-oracle-ink transition;
+  }
+}
+
+@layer utilities {
+  .rotate-m2   { transform: rotate(-2deg); }
+  .rotate-m1   { transform: rotate(-1deg); }
+  .rotate-p1   { transform: rotate(1deg); }
+  .rotate-p2   { transform: rotate(2deg); }
+  .pattern-grid {
+    background-image: linear-gradient(#0A0A0A1A 1px, transparent 1px),
+                      linear-gradient(90deg, #0A0A0A1A 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  .pattern-dots {
+    background-image: radial-gradient(circle at 1px 1px, #0A0A0A 1px, transparent 0);
+    background-size: 12px 12px;
   }
 }

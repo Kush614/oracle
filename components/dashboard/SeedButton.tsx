@@ -15,8 +15,8 @@ export function SeedButton() {
   }
 
   return (
-    <button onClick={seed} disabled={busy} className="btn">
-      {busy ? 'seeding...' : 'Seed demo markets'}
+    <button onClick={seed} disabled={busy} className="btn btn-lavender">
+      {busy ? '...' : '✨'} Seed demo
     </button>
   );
 }
