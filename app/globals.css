@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+  body {
+    font-feature-settings: 'ss01', 'ss02', 'cv01';
+  }
+  a {
+    color: #6aa6ff;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+}
+
+@layer components {
+  .panel {
+    @apply border border-oracle-line rounded-md bg-oracle-panel;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] border border-oracle-line bg-oracle-bg text-oracle-mute;
+  }
+  .chip-yes {
+    @apply border-oracle-yes/40 text-oracle-yes bg-oracle-yes/5;
+  }
+  .chip-no {
+    @apply border-oracle-no/40 text-oracle-no bg-oracle-no/5;
+  }
+  .chip-warn {
+    @apply border-oracle-warn/40 text-oracle-warn bg-oracle-warn/5;
+  }
+  .btn {
+    @apply inline-flex items-center gap-2 px-3 py-1.5 text-sm rounded border border-oracle-line bg-oracle-bg hover:bg-oracle-line transition;
+  }
+  .btn-primary {
+    @apply border-oracle-accent/40 text-oracle-accent hover:bg-oracle-accent/10;
+  }
+}

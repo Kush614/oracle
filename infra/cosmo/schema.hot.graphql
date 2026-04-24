@@ -1,0 +1,43 @@
+extend schema
+  @link(
+    url: "https://specs.apollo.dev/federation/v2.3"
+    import: ["@key", "@shareable"]
+  )
+
+type Market @key(fields: "id") {
+  id: ID!
+  question: String!
+  category: String!
+  stage: String!
+  cycle: Int!
+  oddsYes: Float!
+  confidence: Float!
+  outcome: String!
+  closeTime: String!
+  createdAt: String!
+  evidenceCount: Int!
+  sourceUrls: [String!]!
+  evidence: [EvidenceEvent!]!
+  oddsHistory: [OddsPoint!]!
+}
+
+type EvidenceEvent {
+  evidenceId: String!
+  source: String!
+  sourceType: String!
+  event: String!
+  confidence: Float!
+  supports: String!
+  timestamp: String!
+  fetchedBy: String!
+}
+
+type OddsPoint {
+  ts: Float!
+  value: Float!
+}
+
+type Query {
+  market(id: ID!): Market
+  markets: [Market!]!
+}
