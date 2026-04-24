@@ -6,6 +6,8 @@ import { AgentLeaderboard } from '@/components/dashboard/AgentLeaderboard';
 import { ResolutionLatency } from '@/components/dashboard/ResolutionLatency';
 import { SeedButton } from '@/components/dashboard/SeedButton';
 import { SponsorMarquee } from '@/components/dashboard/SponsorMarquee';
+import { QuickDemo } from '@/components/dashboard/QuickDemo';
+import { RecentResolutions } from '@/components/dashboard/RecentResolutions';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,25 +22,30 @@ export default async function DashboardPage() {
   const open = markets.filter(m => !['resolved', 'disputed', 'no_consensus'].includes(m.stage));
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-10">
-      <Header />
+    <div className="max-w-7xl mx-auto px-6 py-8">
       <Hero />
       <SponsorMarquee />
 
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-4 my-10">
+      <section className="grid grid-cols-2 md:grid-cols-4 gap-4 my-8">
         <Stat label="Markets" value={markets.length.toString()} tone="pink" />
         <Stat label="Open" value={open.length.toString()} tone="sky" />
         <Stat label="Resolved" value={resolved.length.toString()} tone="mint" />
-        <Stat label="Cited.md hashes" value={resolutions.length.toString()} tone="yellow" />
+        <Stat label="Cited.md" value={resolutions.length.toString()} tone="yellow" />
       </section>
 
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
         <div className="lg:col-span-2 space-y-4">
-          <SectionHeader
-            kicker="01 · Live markets"
-            title="Every verdict is a cited.md"
-            sticker="⚡"
-          />
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <SectionHeader
+              kicker="01 · Live markets"
+              title="Every verdict is a cited.md"
+              sticker="⚡"
+            />
+            <div className="flex items-center gap-2">
+              <SeedButton />
+              <Link href="/new" className="btn btn-pink">＋ New</Link>
+            </div>
+          </div>
           {markets.length === 0 ? <EmptyState /> : (
             <ul className="space-y-4">
               {markets.map((m, i) => (
@@ -52,13 +59,19 @@ export default async function DashboardPage() {
 
         <div className="space-y-6">
           <div>
-            <SectionHeader kicker="02 · Agent tournament" title="Leaderboard" sticker="🏆" />
+            <SectionHeader kicker="02 · Resolved" title="Cited artifacts" sticker="📜" />
+            <div className="panel p-5 mt-4 bg-oracle-yellow">
+              <RecentResolutions resolutions={resolutions} />
+            </div>
+          </div>
+          <div>
+            <SectionHeader kicker="03 · Tournament" title="Leaderboard" sticker="🏆" />
             <div className="panel p-5 mt-4 bg-oracle-lavender">
               <AgentLeaderboard scores={scores} />
             </div>
           </div>
           <div>
-            <SectionHeader kicker="03 · Pipeline latency" title="End-to-end" sticker="⏱" />
+            <SectionHeader kicker="04 · Latency" title="End-to-end" sticker="⏱" />
             <div className="panel p-5 mt-4 bg-oracle-mint">
               <ResolutionLatency resolutions={resolutions} />
             </div>
@@ -71,27 +84,9 @@ export default async function DashboardPage() {
   );
 }
 
-function Header() {
-  return (
-    <header className="flex flex-wrap items-start justify-between gap-4 mb-6">
-      <div className="flex items-center gap-3">
-        <div className="sticker font-display text-lg">O</div>
-        <h1 className="font-display text-3xl md:text-4xl">Oracle</h1>
-        <span className="chip chip-ink">v0.1</span>
-      </div>
-      <div className="flex items-center gap-2">
-        <SeedButton />
-        <Link href="/new" className="btn btn-pink">
-          ＋ Create market
-        </Link>
-      </div>
-    </header>
-  );
-}
-
 function Hero() {
   return (
-    <section className="panel bg-oracle-pink p-8 md:p-12 mb-8">
+    <section className="panel bg-oracle-pink p-8 md:p-12 mb-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
         <div>
           <span className="chip chip-ink mb-4">attested resolution infrastructure</span>
@@ -100,18 +95,13 @@ function Hero() {
             One <u className="decoration-oracle-ink decoration-4 underline-offset-4">cited.md</u>. <br />
             Zero hand-waving.
           </h2>
-          <p className="mt-6 max-w-xl text-lg leading-snug">
+          <p className="mt-6 max-w-xl text-base md:text-lg leading-snug">
             Oracle gathers evidence, challenges itself, and publishes a cryptographically signed
             resolution for every prediction market. Nobody has to trust the resolver — verifiers
             re-run the published Guild agent against the same evidence chain.
           </p>
-          <div className="flex items-center gap-3 mt-6">
-            <Link href="/new" className="btn btn-yellow">
-              Create your first market
-            </Link>
-            <Link href="/audit" className="btn">
-              Audit log
-            </Link>
+          <div className="mt-6">
+            <QuickDemo />
           </div>
         </div>
         <div className="panel p-6 bg-oracle-card rotate-p2 hidden lg:block">
@@ -155,7 +145,7 @@ function SectionHeader({ kicker, title, sticker }: { kicker: string; title: stri
       {sticker && <div className="sticker text-lg">{sticker}</div>}
       <div>
         <div className="kicker text-oracle-mute">{kicker}</div>
-        <h3 className="font-display text-2xl leading-none mt-1">{title}</h3>
+        <h3 className="font-display text-xl md:text-2xl leading-none mt-1">{title}</h3>
       </div>
     </div>
   );
@@ -167,8 +157,8 @@ function EmptyState() {
       <div className="sticker text-2xl mx-auto mb-4">🌱</div>
       <p className="font-display text-2xl mb-2">No markets yet.</p>
       <p className="text-oracle-mute max-w-sm mx-auto">
-        Hit <b className="text-oracle-ink">Seed demo markets</b> to watch the evidence pipeline run —
-        TinyFish browses, InsForge narrates, Chainguard signs, Ghost publishes.
+        Hit <b className="text-oracle-ink">▶ Run end-to-end demo</b> above — one click seeds three markets
+        and resolves the first one automatically.
       </p>
     </div>
   );
@@ -176,7 +166,7 @@ function EmptyState() {
 
 function Footer() {
   return (
-    <footer className="mt-20 pt-8 border-t-3 border-oracle-line">
+    <footer className="mt-12 pt-6 border-t-3 border-oracle-line">
       <div className="flex flex-wrap items-center justify-between gap-4 text-sm">
         <div>
           <div className="kicker mb-1">Built on</div>
@@ -184,9 +174,14 @@ function Footer() {
             TinyFish · Nexla · Redis · Guild.ai · InsForge · Ghost.build · Wundergraph · Chainguard
           </div>
         </div>
-        <Link href="/audit" className="link-chunky text-sm">
-          View audit log →
-        </Link>
+        <div className="flex items-center gap-3">
+          <a href="http://localhost:3002" target="_blank" rel="noreferrer" className="link-chunky text-sm">
+            Cosmo playground ↗
+          </a>
+          <Link href="/audit" className="link-chunky text-sm">
+            Audit log →
+          </Link>
+        </div>
       </div>
     </footer>
   );

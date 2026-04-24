@@ -1,6 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Archivo_Black, Inter_Tight } from 'next/font/google';
+import { Navbar } from '@/components/Navbar';
 
 const display = Archivo_Black({
   subsets: ['latin'],
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
       <body className="bg-oracle-bg text-oracle-ink font-sans min-h-screen antialiased">
+        <Navbar />
         {children}
       </body>
     </html>

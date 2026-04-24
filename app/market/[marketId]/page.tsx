@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { OddsSparkline } from '@/components/dashboard/OddsSparkline';
 import { EvidenceStream } from '@/components/dashboard/EvidenceStream';
 import { MarketActions } from '@/components/dashboard/MarketActions';
+import { MarketDeepLinks } from '@/components/dashboard/MarketDeepLinks';
 import { CitedMdPanel } from '@/components/dashboard/CitedMdPanel';
 import { StageBadge } from '@/components/dashboard/StageBadge';
 import { getBus } from '@lib/redis/bus';
@@ -48,8 +49,9 @@ export default async function MarketDetail({ params }: { params: { marketId: str
             <div className="mt-3 text-xs font-mono">conf {(view.market.confidence * 100).toFixed(1)}%</div>
           </div>
         </div>
-        <div className="mt-6">
+        <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <MarketActions marketId={view.market.market_id} stage={view.market.stage} />
+          <MarketDeepLinks marketId={view.market.market_id} stage={view.market.stage} />
         </div>
       </header>
 
